@@ -1,10 +1,26 @@
 {
-    "homepage": "http://www.gradle.org",
-    "version": "2.8",
+    "homepage": "https://gradle.org",
+    "version": "4.5.1",
     "license": "Apache 2.0",
-    "hash": "A88DB9C2F104DEFDAA8011C58CF6CDA6C114298AE3695ECFB8BEB30DA3A903CB",
-    "url": "https://services.gradle.org/distributions/gradle-2.8-bin.zip",
-    "extract_dir": "gradle-2.8",
+    "hash": "3e2ea0d8b96605b7c528768f646e0975bd9822f06df1f04a64fd279b1a17805e",
+    "url": "https://services.gradle.org/distributions/gradle-4.5.1-bin.zip",
+    "extract_dir": "gradle-4.5.1",
     "bin": "bin\\gradle.bat",
-    "depends": "openjdk"
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
+    },
+    "checkver": {
+        "url": "https://gradle.org/install/",
+        "re": "The current Gradle release is version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://services.gradle.org/distributions/gradle-$version-bin.zip",
+        "extract_dir": "gradle-$version",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
 }

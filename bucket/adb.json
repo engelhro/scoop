@@ -1,0 +1,17 @@
+{
+    "version": "27.0.1",
+    "homepage": "https://developer.android.com/studio/releases/platform-tools.html",
+    "url": "https://dl.google.com/android/repository/platform-tools_r27.0.1-windows.zip",
+    "hash": "880662adfb0d6911ff250b9e13930ae1a4110fc36d5866afd4f8f56d935f7939",
+    "bin": [
+        "platform-tools\\adb.exe",
+        "platform-tools\\dmtracedump.exe",
+        "platform-tools\\etc1tool.exe",
+        "platform-tools\\fastboot.exe",
+        "platform-tools\\hprof-conv.exe"
+    ],
+    "checkver": "<h4.*>([\\d.]+) \\(.*\\)</h4>",
+    "autoupdate": {
+        "url": "https://dl.google.com/android/repository/platform-tools_r$version-windows.zip"
+    }
+}

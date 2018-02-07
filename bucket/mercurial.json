@@ -1,21 +1,31 @@
 {
-        "homepage": "mercurial.selenic.com",
-        "version": "3.6",
-        "license": "GPL2",
-        "architecture": {
-                "64bit": {
-                        "url": "https://mercurial-scm.org/release/windows/Mercurial-3.6-x64.exe",
-                        "hash": "f449a89cafd637ca0f7e7db506ccd6936b2f28aedcff2013bbb9df8b156329a2"
-                },
-                "32bit": {
-                        "url": "https://mercurial-scm.org/release/windows/Mercurial-3.6.exe",
-                        "hash": "e90b3f5ed6b2bf14ce720bffdf292485c10e130dce2b618f587b440bdc2b6a0f"
-                }
+    "homepage": "https://www.mercurial-scm.org/",
+    "version": "4.5",
+    "license": "https://www.gnu.org/licenses/gpl-2.0.txt",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.mercurial-scm.org/release/windows/Mercurial-4.5-x64.exe",
+            "hash": "e96f0312e462ca96ef69d4be0c0f4b458ce853c49672cfe32be7c5ce99e5fc6b"
         },
-        "innosetup": true,
-        "bin": "hg.exe",
-        "checkver": {
-                "url": "http://mercurial.selenic.com/sources.js",
-                "re": "Mercurial ([0-9\\.]+) Inno Setup installer - x86 Windows - does not require admin rights"
+        "32bit": {
+            "url": "https://www.mercurial-scm.org/release/windows/Mercurial-4.5.exe",
+            "hash": "e66db15844aca97a140f49b2b7c35a105674f4dccd1f7a13ca4b6be780d666d0"
         }
+    },
+    "innosetup": true,
+    "bin": "hg.exe",
+    "checkver": {
+        "url": "https://www.mercurial-scm.org/release/windows/latest.dat",
+        "re": "Mercurial-([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.mercurial-scm.org/release/windows/Mercurial-$version-x64.exe"
+            },
+            "32bit": {
+                "url": "https://www.mercurial-scm.org/release/windows/Mercurial-$version.exe"
+            }
+        }
+    }
 }

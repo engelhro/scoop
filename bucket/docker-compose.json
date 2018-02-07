@@ -1,14 +1,25 @@
 {
-    "version":  "1.5.2",
-    "license":  "https://github.com/docker/compose/blob/master/LICENSE",
+    "homepage": "https://github.com/docker/compose",
+    "version": "1.18.0",
+    "license": "Apache",
     "architecture": {
         "64bit": {
-            "url":  "https://github.com/docker/compose/releases/download/1.5.2/docker-compose-Windows-x86_64.exe",
-            "hash": "77c32fcc66c85b11a127df4d30ea6669785cb495e3692d85bdbe458521f5f776"
+            "url": "https://github.com/docker/compose/releases/download/1.18.0/docker-compose-Windows-x86_64.exe#/docker-compose.exe",
+            "hash": "9c110e69aac18364f1fb10c99d26318096ebc4cf4bf5fe7931a38cac61b2eb45"
         }
     },
-    "homepage":  "https://docker.com",
     "bin": [
-        ["docker-compose-Windows-x86_64.exe", "docker-compose"]
-    ]
+        [
+            "docker-compose.exe",
+            "docker-compose"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/docker/compose/releases/download/$version/docker-compose-Windows-x86_64.exe#/docker-compose.exe"
+            }
+        }
+    }
 }

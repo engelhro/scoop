@@ -6,12 +6,14 @@
 # You can use '*' in place of <app> to update all apps.
 #
 # Options:
-#   --global, -g    update a globally installed app
-#   --force, -f     force update even when there isn't a newer version
-#   --no-cache, -k  don't use the download cache
-#   --quiet, -q     hide extraneous messages
+#   --global, -g       Update a globally installed app
+#   --force, -f        Force update even when there isn't a newer version
+#   --no-cache, -k     Don't use the download cache
+#   --independent, -i  Don't install dependencies automatically
+#   --quiet, -q        Hide extraneous messages
 . "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\install.ps1"
+. "$psscriptroot\..\lib\shortcuts.ps1"
+. "$psscriptroot\..\lib\psmodules.ps1"
 . "$psscriptroot\..\lib\decompress.ps1"
 . "$psscriptroot\..\lib\manifest.ps1"
 . "$psscriptroot\..\lib\buckets.ps1"
@@ -19,46 +21,61 @@
 . "$psscriptroot\..\lib\getopt.ps1"
 . "$psscriptroot\..\lib\depends.ps1"
 . "$psscriptroot\..\lib\config.ps1"
+. "$psscriptroot\..\lib\git.ps1"
+. "$psscriptroot\..\lib\install.ps1"
 
 reset_aliases
 
-$opt, $apps, $err = getopt $args 'gfkq' 'global','force', 'no-cache', 'quiet'
+$opt, $apps, $err = getopt $args 'gfkqi' 'global','force', 'no-cache', 'quiet', 'independent'
 if($err) { "scoop update: $err"; exit 1 }
 $global = $opt.g -or $opt.global
 $force = $opt.f -or $opt.force
 $use_cache = !($opt.k -or $opt.'no-cache')
 $quiet = $opt.q -or $opt.quiet
+$independent = $opt.i -or $opt.independent
+
+# load config
+$repo = $(scoop config SCOOP_REPO)
+if(!$repo) {
+    $repo = "https://github.com/lukesampson/scoop"
+    scoop config SCOOP_REPO "$repo"
+}
+
+$branch = $(scoop config SCOOP_BRANCH)
+if(!$branch) {
+    $branch = "master"
+    scoop config SCOOP_BRANCH "$branch"
+}
 
 function update_scoop() {
     # check for git
     $git = try { gcm git -ea stop } catch { $null }
-    if(!$git) { abort "scoop uses git to update itself. run 'scoop install git'." }
+    if(!$git) { abort "Scoop uses Git to update itself. Run 'scoop install git' and try again." }
 
-    "updating scoop..."
+    write-host "Updating Scoop..."
     $currentdir = fullpath $(versiondir 'scoop' 'current')
     if(!(test-path "$currentdir\.git")) {
-        # load config
-        $repo = $(scoop config SCOOP_REPO)
-        if(!$repo) {
-            $repo = "http://github.com/lukesampson/scoop"
-            scoop config SCOOP_REPO "$repo"
-        }
-
-        $branch = $(scoop config SCOOP_BRANCH)
-        if(!$branch) {
-            $branch = "master"
-            scoop config SCOOP_BRANCH "$branch"
-        }
-
-        # remove non-git scoop
-        rm -r -force $currentdir -ea stop
+        $newdir = fullpath $(versiondir 'scoop' 'new')
 
         # get git scoop
-        git clone -q $repo --branch $branch --single-branch $currentdir
+        git_clone -q $repo --branch $branch --single-branch "`"$newdir`""
+
+        # check if scoop was successful downloaded
+        if(!(test-path "$newdir")) {
+            abort 'Scoop update failed.'
+        }
+
+        # replace non-git scoop with the git version
+        rm -r -force $currentdir -ea stop
+        mv $newdir $currentdir
     }
     else {
         pushd $currentdir
-        git pull -q
+        git_pull -q
+        $res = $lastexitcode
+        if($res -ne 0) {
+            abort 'Update failed.'
+        }
         popd
     }
 
@@ -66,28 +83,32 @@ function update_scoop() {
     shim "$currentdir\bin\scoop.ps1" $false
 
     @(buckets) | % {
-        "updating $_ bucket..."
+        write-host "Updating '$_' bucket..."
         pushd (bucketdir $_)
-        git pull -q
+        git_pull -q
         popd
     }
-    success 'scoop was updated successfully!'
+
+    scoop config lastupdate (get-date)
+    success 'Scoop was updated successfully!'
 }
 
-function update($app, $global, $quiet = $false) {
+function update($app, $global, $quiet = $false, $independent, $suggested, $use_cache = $true) {
     $old_version = current_version $app $global
     $old_manifest = installed_manifest $app $old_version $global
     $install = install_info $app $old_version $global
     $check_hash = $true
 
     # re-use architecture, bucket and url from first install
-    $architecture = $install.architecture
+    $architecture = ensure_architecture $install.architecture
     $bucket = $install.bucket
     $url = $install.url
 
-    # check dependencies
-    $deps = @(deps $app $architecture) | ? { !(installed $_) }
-    $deps | % { install_app $_ $architecture $global }
+    if(!$independent) {
+        # check dependencies
+        $deps = @(deps $app $architecture) | ? { !(installed $_) }
+        $deps | % { install_app $_ $architecture $global $suggested $use_cache }
+    }
 
     $version = latest_version $app $bucket $url
     $is_nightly = $version -eq 'nightly'
@@ -98,92 +119,87 @@ function update($app, $global, $quiet = $false) {
 
     if(!$force -and ($old_version -eq $version)) {
         if (!$quiet) {
-            warn "the latest version of $app ($version) is already installed."
-            "run 'scoop update' to check for new versions."
+            warn "The latest version of '$app' ($version) is already installed."
         }
         return
     }
-    if(!$version) { abort "no manifest available for $app" } # installed from a custom bucket/no longer supported
+    if(!$version) {
+        # installed from a custom bucket/no longer supported
+        error "No manifest available for '$app'."
+        return
+    }
 
     $manifest = manifest $app $bucket $url
 
-    "updating $app ($old_version -> $version)"
+    write-host "Updating '$app' ($old_version -> $version)"
 
     $dir = versiondir $app $old_version $global
 
-    "uninstalling $app ($old_version)"
+    write-host "Uninstalling '$app' ($old_version)"
     run_uninstaller $old_manifest $architecture $dir
-    rm_shims $old_manifest $global
+    rm_shims $old_manifest $global $architecture
     env_rm_path $old_manifest $dir $global
     env_rm $old_manifest $global
-    # note: keep the old dir in case it contains user files
 
-    "installing $app ($version)"
-    $dir = ensure (versiondir $app $version $global)
+    # If a junction was used during install, that will have been used
+    # as the reference directory. Otherwise it will just be the version
+    # directory.
+    $refdir = unlink_current $dir
 
-    # save info for uninstall
-    save_installed_manifest $app $bucket $dir $url
-    save_install_info @{ 'architecture' = $architecture; 'url' = $url; 'bucket' = $bucket } $dir
-
-    $fname = dl_urls $app $version $manifest $architecture $dir $use_cache $check_hash
-    unpack_inno $fname $manifest $dir
-    pre_install $manifest
-    run_installer $fname $manifest $architecture $dir
-    ensure_install_dir_not_in_path $dir
-    create_shims $manifest $dir $global
-    env_add_path $manifest $dir $global
-    env_set $manifest $dir $global
-    post_install $manifest
-
-    success "$app was updated from $old_version to $version"
-
-    show_notes $manifest
-}
-
-function ensure_all_installed($apps, $global) {
-    $app = $apps | ? { !(installed $_ $global) } | select -first 1 # just get the first one that's not installed
-    if($app) {
-        if(installed $app (!$global)) {
-            function wh($g) { if($g) { "globally" } else { "for your account" } }
-            write-host "$app isn't installed $(wh $global), but it is installed $(wh (!$global))" -f darkred
-            "try updating $(if($global) { 'without' } else { 'with' }) the --global (or -g) flag instead"
-            exit 1
-        } else {
-            abort "$app isn't installed"
-        }
+    if($bucket) {
+        # add bucket name it was installed from
+        $app = "$bucket/$app"
     }
-}
-
-# convert list of apps to list of ($app, $global) tuples
-function applist($apps, $global) {
-    return ,@($apps |% { ,@($_, $global) })
+    install_app $app $architecture $global $suggested $use_cache
 }
 
 if(!$apps) {
     if($global) {
-        "scoop update: --global is invalid when <app> not specified"; exit 1
+        "scoop update: --global is invalid when <app> is not specified."; exit 1
     }
     if (!$use_cache) {
-        "scoop update: --no-cache is invalid when <app> not specified"; exit 1
+        "scoop update: --no-cache is invalid when <app> is not specified."; exit 1
     }
     update_scoop
 } else {
     if($global -and !(is_admin)) {
-        'ERROR: you need admin rights to update global apps'; exit 1
+        'ERROR: You need admin rights to update global apps.'; exit 1
     }
 
-    if($apps -eq '*') {
+    if(is_scoop_outdated) {
+        update_scoop
+    }
+    $outdated = @()
+    $apps_param = $apps
+
+    if($apps_param -eq '*') {
         $apps = applist (installed_apps $false) $false
         if($global) {
             $apps += applist (installed_apps $true) $true
         }
     } else {
-        ensure_all_installed $apps $global
-        $apps = applist $apps $global
+        $apps = ensure_all_installed $apps_param $global
+    }
+    if($apps) {
+        $apps | % {
+            ($app, $global) = $_
+            $status = app_status $app $global
+            if($force -or $status.outdated) {
+                $outdated += applist $app $global
+                write-host -f yellow ("$app`: $($status.version) -> $($status.latest_version){0}" -f ('',' (global)')[$global])
+            } elseif($apps_param -ne '*') {
+                write-host -f green "$app`: $($status.version) (latest version)"
+            }
+        }
+
+        if($outdated.Length -gt 1) { write-host -f DarkCyan "Updating $($outdated.Length) outdated apps:" }
+        elseif($outdated.Length -eq 0) { write-host -f Green "Latest versions for all apps are installed! For more information try 'scoop status'" }
+        else { write-host -f DarkCyan "Updating one outdated app:" }
     }
 
-    # $apps is now a list of ($app, $global) tuples
-    $apps | % { update @_ $quiet }
+    $suggested = @{};
+    # # $outdated is a list of ($app, $global) tuples
+    $outdated | % { update @_ $quiet $independent $suggested $use_cache }
 }
 
 exit 0

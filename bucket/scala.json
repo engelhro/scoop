@@ -1,10 +1,10 @@
 {
-    "homepage": "http://www.scala-lang.org/",
-    "version": "2.11.7",
+    "homepage": "https://www.scala-lang.org/",
+    "version": "2.12.4",
     "license": "BSD 3-Clause",
-    "url": "http://downloads.typesafe.com/scala/2.11.7/scala-2.11.7.zip",
-    "hash": "7A5ED496EC3459E5037120F7288C80C7A5088E93E672598DA6187F7546B123CF",
-    "extract_dir": "scala-2.11.7",
+    "url": "https://downloads.typesafe.com/scala/2.12.4/scala-2.12.4.zip",
+    "hash": "7ef1b50764971721d4f7e2d8755b95798104b44582068990f510469cee6c02a2",
+    "extract_dir": "scala-2.12.4",
     "bin": [
         "bin\\fsc.bat",
         "bin\\scala.bat",
@@ -12,8 +12,21 @@
         "bin\\scaladoc.bat",
         "bin\\scalap.bat"
     ],
-    "set_env": {
+    "env_set": {
         "SCALA_HOME": "$dir"
     },
-    "depends": "openjdk"
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.scala-lang.org/download/",
+        "re": "scala-([\\d.]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://downloads.typesafe.com/scala/$version/scala-$version.zip",
+        "extract_dir": "scala-$version"
+    }
 }

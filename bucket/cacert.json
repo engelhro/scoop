@@ -1,0 +1,15 @@
+{
+    "version": "2018-01-17",
+    "homepage": "https://curl.haxx.se/docs/caextract.html",
+    "license": "MPL 2.0",
+    "url": "https://curl.haxx.se/ca/cacert-2018-01-17.pem#/cacert.pem",
+    "hash": "defe310a0184a12e4b1b3d147f1d77395dd7a09e3428373d019bef5d542ceba3",
+    "checkver": {
+        "url": "https://curl.haxx.se/docs/caextract.html",
+        "re": "cacert-([\\d-]{10}).pem"
+    },
+    "post_install": "if (Test-Path \"$(appdir curl)\") {cp \"$dir\\cacert.pem\" \"$(appdir curl)\\current\\bin\\curl-ca-bundle.crt\"}",
+    "autoupdate": {
+        "url": "https://curl.haxx.se/ca/cacert-$version.pem#/cacert.pem"
+    }
+}

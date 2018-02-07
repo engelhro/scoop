@@ -53,7 +53,7 @@ function set_config($name, $val) {
         $cfg.remove($name)
     }
 
-    convertto-json $cfg | out-file $cfgpath -encoding utf8
+    convertto-json $cfg | set-content $cfgpath -encoding utf8
 }
 
 $cfg = load_cfg
@@ -81,6 +81,6 @@ if($p) {
             [net.webrequest]::defaultwebproxy.credentials = new-object net.networkcredential($user, $pass)
         }
     } catch {
-        warn "failed to use proxy '$p': $($_.exception.message)"
+        warn "Failed to use proxy '$p': $($_.exception.message)"
     }
 }

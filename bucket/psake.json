@@ -1,8 +1,8 @@
 {
-    "version":  "4.4.1",
-    "url":  "http://nuget.org/api/v2/package/psake/4.4.1#.zip",
-    "homepage":  "https://github.com/psake/psake",
-    "hash":  "7a1330ed66d1c664a3e64c5c8d27d7e6acf70f9b402c6c63814cc268bbe5cf0c",
-    "bin": "psake.ps1",
+    "version": "4.7.0",
+    "url": "https://nuget.org/api/v2/package/psake/4.7.0#/dl.7z",
+    "homepage": "https://github.com/psake/psake",
+    "hash": "0d4eaaaf15b519da55d0828357bb130c05321837fd724acfce7dbdbb87e76457",
+    "bin": "psake\\psake.ps1",
     "extract_dir": "tools"
 }

@@ -1,13 +1,16 @@
 {
-    "homepage": "http://elixir-lang.org/",
-    "version": "0.10.3",
+    "homepage": "https://elixir-lang.org/",
+    "version": "1.6.1",
     "depends": "erlang",
-    "url": "https://github.com/elixir-lang/elixir/releases/download/v0.10.3/v0.10.3.zip",
-    "hash": "c898906651b3edb40e642221e58642a0abc165c97b3624a251bfe337efae9278",
-    "bin": [
-        "bin\\elixir.bat",
-        "bin\\elixirc.bat",
-        "bin\\iex.bat",
-        "bin\\mix.bat"
-    ]
+    "url": "https://github.com/elixir-lang/elixir/releases/download/v1.6.1/Precompiled.zip",
+    "hash": "9e1cf3651ba2a740cc4669a8b35c903801a7c8c4ea8068f951f12fc281d3c0d1",
+    "env_add_path": [
+        "bin"
+    ],
+    "checkver": {
+        "github": "https://github.com/elixir-lang/elixir"
+    },
+    "autoupdate": {
+        "url": "https://github.com/elixir-lang/elixir/releases/download/v$version/Precompiled.zip"
+    }
 }

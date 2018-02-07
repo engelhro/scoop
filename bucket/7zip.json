@@ -1,18 +1,34 @@
 {
     "homepage": "http://www.7-zip.org/",
     "license": "http://www.7-zip.org/license.txt",
-    "version": "15.14",
+    "version": "18.01",
     "architecture": {
         "64bit": {
-            "url": "http://www.7-zip.org/a/7z1514-x64.msi",
-            "hash": "cefe1a9092d8a6be68468c33910d6206b40e934fb63cab686c5cccf369fbf712"
+            "url": "http://7-zip.org/a/7z1801-x64.msi",
+            "hash": "b23f97c230a921f834550d2bf467d313952861f641f49ca93ccddd9d2e0300e2"
         },
         "32bit": {
-            "url": "http://www.7-zip.org/a/7z1514.msi",
-            "hash": "eaf58e29941d8ca95045946949d75d9b5455fac167df979a7f8e4a6bf2d39680"
+            "url": "http://7-zip.org/a/7z1801.msi",
+            "hash": "bad4ad66869fe95b887a1563d17d538b7fdcddb94b31b3f19ab4825b25d41999"
         }
     },
     "extract_dir": "Files/7-Zip",
     "bin": "7z.exe",
-    "checkver": "Download 7-zip ([^\\ ]+)"
+    "checkver": "Download 7-Zip ([\\d.]+)",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://7-zip.org/a/7z$cleanVersion-x64.msi"
+            },
+            "32bit": {
+                "url": "http://7-zip.org/a/7z$cleanVersion.msi"
+            }
+        }
+    },
+    "shortcuts": [
+        [
+            "7zFM.exe",
+            "7zip"
+        ]
+    ]
 }

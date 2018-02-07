@@ -1,35 +1,48 @@
 {
-    "homepage": "http://rubyinstaller.org",
-    "version": "2.2.3",
+    "homepage": "https://rubyinstaller.org",
+    "version": "2.5.0-1",
     "architecture": {
         "64bit": {
-            "url": [
-                "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.3-x64-mingw32.7z?direct#/dl.7z",
-                "http://cdn.rubyinstaller.org/archives/devkits/DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe#/dl2.7z"
-            ],
-            "hash": [
-                "683270a7e09ef756476c00902eda9999137468eb21a371831b7c01602d2fd069",
-                "2ada04c7234199126c0f34f6ea7163a8f8dccb1e15814af175a189f6ac48b8ac"
-            ],
-            "extract_dir": "ruby-2.2.3-x64-mingw32"
+            "url": "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.5.0-1/rubyinstaller-2.5.0-1-x64.7z",
+            "hash": "0a5619bab1cb5d3db78797e88641b3425cd068de12a093de4f36db6cd08e01b6",
+            "extract_dir": "rubyinstaller-2.5.0-1-x64"
         },
         "32bit": {
-            "url": [
-                "http://dl.bintray.com/oneclick/rubyinstaller/ruby-2.2.3-i386-mingw32.7z?direct#/dl.7z",
-                "http://cdn.rubyinstaller.org/archives/devkits/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe#/dl2.7z"
-            ],
-            "hash": [
-                "08b33a85ec26c01a6d305a258680976b57081e22ad9196623c1cf154e558e3ce",
-                "61a06b5da06dd94343e591163ac0d43c544e9cd4df770f01275645b268b44dc7"
-            ],
-            "extract_dir": "ruby-2.2.3-i386-mingw32"
+            "url": "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-2.5.0-1/rubyinstaller-2.5.0-1-x86.7z",
+            "hash": "1c08453864864904d970e413c6abb1c8c6022b5085b6a55fc09171a5d5ed9b43",
+            "extract_dir": "rubyinstaller-2.5.0-1-x86"
         }
     },
-    "extract_to": [ "", "devkit" ],
-    "env_add_path": "bin",
-    "post_install": "pushd $dir\\devkit;echo \"---`n- $dir\" | out-file config.yml -enc default; ruby dk.rb install;popd;",
+    "persist": "gems",
+    "env_add_path": [
+        "bin",
+        "gems\\bin"
+    ],
+    "env_set": {
+        "GEM_HOME": "$dir\\gems",
+        "GEM_PATH": "$dir\\gems"
+    },
+    "suggest": {
+        "MSYS2": [
+            "msys2"
+        ]
+    },
+    "post_install": "gem install rake",
+    "notes": "Install MSYS2 via 'scoop install msys2' and then run 'ridk install' to install the toolchain!",
     "checkver": {
-        "url": "http://rubyinstaller.org/downloads/",
-        "re": "<li class=\"exe\"><a.*?>Ruby ([0-9\\.p-]+)</a></li>"
+        "github": "https://github.com/oneclick/rubyinstaller2",
+        "re": "/releases/tag/(?:v|rubyinstaller-)?([\\d.]+(?:-[\\d])?)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-$version/rubyinstaller-$version-x64.7z",
+                "extract_dir": "rubyinstaller-$version-x64"
+            },
+            "32bit": {
+                "url": "https://github.com/oneclick/rubyinstaller2/releases/download/rubyinstaller-$version/rubyinstaller-$version-x86.7z",
+                "extract_dir": "rubyinstaller-$version-x86"
+            }
+        }
     }
 }

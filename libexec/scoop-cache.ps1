@@ -7,6 +7,9 @@
 #     scoop cache show
 # to see what's in the cache, and
 #     scoop cache rm <app> to remove downloads for a specific app.
+#
+# To clear everything in your cache, use:
+#     scoop cache rm *
 param($cmd, $app)
 
 . "$psscriptroot\..\lib\help.ps1"
@@ -19,42 +22,30 @@ function cacheinfo($file) {
     return new-object psobject -prop @{ app=$app; version=$version; url=$url; size=$size }
 }
 
-function filesize($length) {
-    $gb = [math]::pow(2, 30)
-    $mb = [math]::pow(2, 20)
-    $kb = [math]::pow(2, 10)
+function show($app) {
+    $files = @(gci "$cachedir" | ? { $_.name -match "^$app" })
+    $total_length = ($files | measure length -sum).sum -as [double]
 
-    if($length -gt $gb) {
-        "{0:n1} GB" -f ($length / $gb)
-    } elseif($length -gt $mb) {
-        "{0:n1} MB" -f ($length / $mb)
-    } elseif($length -gt $kb) {
-        "{0:n1} KB" -f ($length / $kb)
-    } else {
-        "$($length) B"
-    }
+    $f_app  = @{ expression={"$($_.app) ($($_.version))" }}
+    $f_url  = @{ expression={$_.url};alignment='right'}
+    $f_size = @{ expression={$_.size}; alignment='right'}
+
+
+    $files | % { cacheinfo $_ } | ft $f_size, $f_app, $f_url -auto -hide
+
+    "Total: $($files.length) $(pluralize $files.length 'file' 'files'), $(filesize $total_length)"
 }
 
 switch($cmd) {
     'rm' {
         if(!$app) { 'ERROR: <app> missing'; my_usage; exit 1 }
-        rm "$scoopdir\cache\$app#*"
+        rm "$cachedir\$app#*"
     }
     'show' {
-        $files = @(gci "$scoopdir\cache" | ? { $_.name -match "^$app" })
-        $total_length = ($files | measure length -sum).sum
-
-        $f_app  = @{ expression={"$($_.app) ($($_.version))" }}
-        $f_url  = @{ expression={$_.url};alignment='right'}
-        $f_size = @{ expression={$_.size}; alignment='right'}
-
-
-        $files | % { cacheinfo $_ } | ft $f_size, $f_app, $f_url -auto -hide
-
-        "total: $($files.length) $(pluralize $files.length 'file' 'files'), $(filesize $total_length)"
+        show $app
     }
     default {
-        "cache '$cmd' not supported"; my_usage; exit 1
+        show
     }
 }
 

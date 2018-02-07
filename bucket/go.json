@@ -1,21 +1,49 @@
 {
-    "version": "1.5.2",
-    "homepage": "http://golang.org",
-    "license": "http://golang.org/LICENSE",
-    "architecture": {
-        "64bit": {
-            "url": "https://storage.googleapis.com/golang/go1.5.2.windows-amd64.zip",
-            "hash": "sha1:5eb85b0eec36cfef05700935f2420b6104986733"
-        },
-        "32bit": {
-            "url": "https://storage.googleapis.com/golang/go1.5.2.windows-386.zip",
-            "hash": "sha1:a9b265268a4632ad6f7ca8769e6a34eb1522f784"
-        }
-    },
+    "version": "1.9.3",
+    "homepage": "https://golang.org",
+    "license": "https://golang.org/LICENSE",
     "extract_dir": "go",
-    "env_add_path": "bin",
     "env_set": {
         "GOROOT": "$dir"
     },
-    "checkver": "<div id=\"footer\">\\s*Build version go([0-9\\.]+)\\.<br>"
+    "bin": [
+        "bin/go.exe",
+        "bin/gofmt.exe",
+        "bin/godoc.exe"
+    ],
+    "installer": {
+        "script": "add_first_in_path \"$env:USERPROFILE\\go\\bin\" $global"
+    },
+    "uninstaller": {
+        "script": "remove_from_path \"$env:USERPROFILE\\go\\bin\" $global"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://storage.googleapis.com/golang/go1.9.3.windows-amd64.zip",
+            "hash": "4eee59bb5b70abc357aebd0c54f75e46322eb8b58bbdabc026fdd35834d65e1e"
+        },
+        "32bit": {
+            "url": "https://storage.googleapis.com/golang/go1.9.3.windows-386.zip",
+            "hash": "cab7d4e008adefed322d36dee87a4c1775ab60b25ce587a2b55d90c75d0bafbc"
+        }
+    },
+    "checkver": "Build version go([\\d\\.]+)\\.",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://storage.googleapis.com/golang/go$version.windows-amd64.zip"
+            },
+            "32bit": {
+                "url": "https://storage.googleapis.com/golang/go$version.windows-386.zip"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    },
+    "notes": "
+        Your GOROOT has been set to: $dir
+        You can run 'go env GOROOT' to view this at any time.
+        \"$env:USERPROFILE\\go\\bin)\" has been added to your PATH.
+    "
 }

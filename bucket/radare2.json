@@ -1,0 +1,48 @@
+{
+    "version": "2.0.1",
+    "license": "GPL2",
+    "homepage": "https://www.radare.org/r/",
+    "architecture": {
+        "64bit": {
+            "url": "https://radare.mikelloc.com/get/2.0.1/radare2-w64-2.0.1.zip",
+            "hash": "sha1:0d10db6a27c7bb4ef329f25ffde395b94d77f94e",
+            "extract_dir": "radare2-w64-2.0.1"
+        },
+        "32bit": {
+            "url": "https://radare.mikelloc.com/get/2.0.1/radare2-w32-2.0.1.zip",
+            "hash": "sha1:c8a25f003ec82e84394c1e646553065055cf0cec",
+            "extract_dir": "radare2-w32-2.0.1"
+        }
+    },
+    "bin": [
+        "r2agent.exe",
+        "rabin2.exe",
+        "radare2.exe",
+        "radiff2.exe",
+        "rafind2.exe",
+        "ragg2.exe",
+        "rahash2.exe",
+        "rarun2.exe",
+        "rasm2.exe",
+        "rax2.exe"
+    ],
+    "checkver": {
+        "url": "https://www.radare.org/r/down.html",
+        "re": "last release is ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://radare.mikelloc.com/get/$version/radare2-w64-$version.zip",
+                "extract_dir": "radare2-w64-$version"
+            },
+            "32bit": {
+                "url": "https://radare.mikelloc.com/get/$version/radare2-w32-$version.zip",
+                "extract_dir": "radare2-w32-$version"
+            }
+        },
+        "hash": {
+            "url": "https://radare.mikelloc.com/get/$version/checksums.sha1sum"
+        }
+    }
+}

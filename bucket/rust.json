@@ -1,15 +1,15 @@
 {
-    "homepage": "http://www.rust-lang.org",
-    "version": "1.5.0",
+    "homepage": "https://www.rust-lang.org",
+    "version": "1.23.0",
     "license": "MIT/Apache 2.0",
     "architecture": {
-        "32bit": {
-            "url": "https://static.rust-lang.org/dist/rust-1.5.0-i686-pc-windows-gnu.msi",
-            "hash": "e9b78afcd621e14511f44aa83be7640eecb76151abc2310b961ac7d3050b54fb"
-        },
         "64bit": {
-            "url": "https://static.rust-lang.org/dist/rust-1.5.0-x86_64-pc-windows-gnu.msi",
-            "hash": "6ef0732c1c09fc190bc1a897dda067605782bb19b56d59af84a185cf872511a9"
+            "url": "https://static.rust-lang.org/dist/rust-1.23.0-x86_64-pc-windows-gnu.msi",
+            "hash": "ebc9323a2a449bbb29c7e8a3da1f7494d10a063a113b0374a186ff01faaae670"
+        },
+        "32bit": {
+            "url": "https://static.rust-lang.org/dist/rust-1.23.0-i686-pc-windows-gnu.msi",
+            "hash": "c508e3c7f465f82c8542c63c46f8787cc5c740d1a67b8fe55add0879677a1ab5"
         }
     },
     "bin": [
@@ -17,5 +17,18 @@
         "Rust\\bin\\rustdoc.exe",
         "Rust\\bin\\cargo.exe"
     ],
-    "checkver": "<h2>Docs \\(([0-9\\.]+)\\)</h2>"
+    "checkver": {
+        "url": "https://github.com/rust-lang/rust/releases",
+        "re": "<span class=\"tag-name\">([\\d.]+)</span>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://static.rust-lang.org/dist/rust-$version-x86_64-pc-windows-gnu.msi"
+            },
+            "32bit": {
+                "url": "https://static.rust-lang.org/dist/rust-$version-i686-pc-windows-gnu.msi"
+            }
+        }
+    }
 }

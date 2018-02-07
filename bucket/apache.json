@@ -1,10 +1,22 @@
 {
-    "homepage": "http://www.apachelounge.com",
-    "version": "2.4.18",
+    "homepage": "https://www.apachelounge.com",
+    "version": "2.4.29",
     "license": "Apache 2.0",
-    "url": "https://www.apachelounge.com/download/VC11/binaries/httpd-2.4.18-win32-VC11.zip",
-    "hash": "EAE58A1499BEFD0BFC86F84767AC595633C62C8E7ACE093961AEB1DBE3966086",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.apachelounge.com/download/VC15/binaries/httpd-2.4.29-win64-VC15.zip",
+            "hash": "2F686F7CF56232E50F5E226D0C11C6B2E6CA241F77A966CC1282E1C940995950"
+        },
+        "32bit": {
+            "url": "https://www.apachelounge.com/download/VC15/binaries/httpd-2.4.29-win32-VC15.zip",
+            "hash": "4F7BA52D7B0A0991CAD581D2118910FAEB90652A2819D5355102589087BEEBE2"
+        }
+    },
     "extract_dir": "Apache24",
+    "persist": [
+        "htdocs",
+        "conf"
+    ],
     "bin": [
         "bin\\ab.exe",
         "bin\\abs.exe",
@@ -24,7 +36,21 @@ $root=(scoop which httpd | split-path -res -par | split-path -par) -replace '\\\
 (gc $conf) | % { $_ -replace 'c:/Apache24', \"$root\" } | sc $conf
 ",
     "checkver": {
-        "url": "http://www.apachelounge.com/download/",
-        "re": "Apache ([0-9\\.]+) Win32"
+        "url": "https://www.apachelounge.com/download/",
+        "re": "Apache ([\\d.]+) Win32"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.apachelounge.com/download/VC15/binaries/httpd-$version-win64-VC15.zip"
+            },
+            "32bit": {
+                "url": "https://www.apachelounge.com/download/VC15/binaries/httpd-$version-win32-VC15.zip"
+            }
+        },
+        "hash": {
+            "url": "$url.txt",
+            "find": "SHA256-Checksum for: (?:$basename):\\s+([a-fA-F0-9]{64})"
+        }
     }
 }

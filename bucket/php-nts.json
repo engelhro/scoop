@@ -1,21 +1,67 @@
 {
     "homepage": "http://windows.php.net",
-    "version": "5.6.15",
-    "license": "http://www.php.net/license/",
+    "version": "7.2.2",
+    "license": "https://php.net/license/",
     "architecture": {
         "64bit": {
-            "url": "http://windows.php.net/downloads/releases/php-5.6.15-nts-Win32-VC11-x64.zip",
-            "hash": "sha1:1108a921c993c0f767aa03262b0f02cab9a83f9b"
+            "url": "http://windows.php.net/downloads/releases/php-7.2.2-nts-Win32-VC15-x64.zip",
+            "hash": "1eb64465593ca39360907c3b74afaad6b07425b68659dee86b830b73a98940d9"
         },
         "32bit": {
-            "url": "http://windows.php.net/downloads/releases/php-5.6.15-nts-Win32-VC11-x86.zip",
-            "hash": "sha1:c9f0aefb6add0b0afa9dab1b640333d8a7789a66"
+            "url": "http://windows.php.net/downloads/releases/php-7.2.2-nts-Win32-VC15-x86.zip",
+            "hash": "d8705d87bb7f6e753c1a3d9e362279832719361fab33877a8419838e0b60a6ba"
         }
     },
-    "bin": "php.exe",
-    "post_install": "cp \"$dir\\php.ini-production\" \"$dir\\php.ini\"",
+    "bin": [
+        "php.exe",
+        "php-cgi.exe",
+        "phpdbg.exe"
+    ],
+    "persist": [
+        "cli",
+        [
+            "php.ini-production",
+            "cli\\php.ini"
+        ]
+    ],
+    "env_set": {
+        "PHP_INI_SCAN_DIR": "$dir\\cli;$dir\\cli\\conf.d;"
+    },
+    "post_install": "
+# Copy ini scan dir from old location before persistent update
+if ((Test-Path \"$dir\\..\\conf\") -and !(Test-Path \"$dir\\cli\\conf.d\")) {
+    Write-Host -ForegroundColor Cyan \"We are moving your php configuration to $dir\\cli\\conf.d\"
+    Move-Item \"$dir\\..\\conf\" \"$dir\\cli\\conf.d\"
+}
+
+# Create directory for custom PHP configuration
+if (!(Test-Path \"$dir\\cli\\conf.d\")) {
+    (New-Item -Type directory \"$dir\\cli\\conf.d\") | Out-Null
+}
+
+# Enable extensions to be found in installation-relative folder (the default is to search C:/php)
+(gc \"$dir\\cli\\php.ini\") | % { $_ -replace '; extension_dir = \"ext\"', 'extension_dir = \"ext\"' } | sc \"$dir\\cli\\php.ini\"
+",
     "checkver": {
         "url": "http://windows.php.net/download/",
-        "re": "<h3 id=\"php-5.6\".*?>.*?\\(([0-9\\.]+)\\)</h3>"
+        "re": "<h3 id=\"php-7.2\".*?>.*?\\(([\\d.]+)\\)</h3>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://windows.php.net/downloads/releases/php-$version-nts-Win32-VC15-x64.zip"
+            },
+            "32bit": {
+                "url": "http://windows.php.net/downloads/releases/php-$version-nts-Win32-VC15-x86.zip"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/sha256sum.txt"
+        }
+    },
+    "suggest": {
+        "vcredist": [
+            "extras/vcredist2017"
+        ]
     }
 }

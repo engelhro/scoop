@@ -1,11 +1,15 @@
 {
-    "homepage": "http://www.rust-lang.org",
-    "version": "1.5.0",
+    "homepage": "https://www.rust-lang.org",
+    "version": "1.23.0",
     "license": "MIT/Apache 2.0",
     "architecture": {
         "64bit": {
-            "url": "https://static.rust-lang.org/dist/rust-1.5.0-x86_64-pc-windows-msvc.msi",
-            "hash": "186339748eb83dbb588231f66511134b77ac93bdcf41e330954e51b04edf467e"
+            "url": "https://static.rust-lang.org/dist/rust-1.23.0-x86_64-pc-windows-msvc.msi",
+            "hash": "602f63b59a27c8e2cc202fb7966909c4ccc33bc649b1af5200758b37cd32b15d"
+        },
+        "32bit": {
+            "url": "https://static.rust-lang.org/dist/rust-1.23.0-i686-pc-windows-msvc.msi",
+            "hash": "15f71a32a33051baad8f52c836d4bed0bea99779c07b3ca8dbffb7b1e3f6e429"
         }
     },
     "bin": [
@@ -13,5 +17,18 @@
         "Rust\\bin\\rustdoc.exe",
         "Rust\\bin\\cargo.exe"
     ],
-    "checkver": "<h2>Docs \\(([0-9\\.]+)\\)</h2>"
+    "checkver": {
+        "url": "https://github.com/rust-lang/rust/releases",
+        "re": "<span class=\"tag-name\">([\\d.]+)</span>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://static.rust-lang.org/dist/rust-$version-x86_64-pc-windows-msvc.msi"
+            },
+            "32bit": {
+                "url": "https://static.rust-lang.org/dist/rust-$version-i686-pc-windows-msvc.msi"
+            }
+        }
+    }
 }

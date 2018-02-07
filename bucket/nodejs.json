@@ -1,21 +1,48 @@
 {
-    "homepage": "http://nodejs.org",
-    "version": "5.5.0",
+    "homepage": "https://nodejs.org",
+    "version": "9.5.0",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://nodejs.org/dist/v5.5.0/node-v5.5.0-x64.msi",
-            "hash": "ba1dcd3035b045fb4ecb254bab1e0dda24934f2a773e6e05d0a54ac4adc4ee3b"
+            "url": "https://nodejs.org/dist/v9.5.0/node-v9.5.0-win-x64.7z",
+            "hash": "ccd91770352325793b86b2287a01a801467de1bcdb0fd04364a79474292e7683",
+            "extract_dir": "node-v9.5.0-win-x64"
         },
         "32bit": {
-            "url": "https://nodejs.org/dist/v5.5.0/node-v5.5.0-x86.msi",
-            "hash": "40b667ca279927aacbf65f32f0a3400ff2aba15db46fd3eb1a1d8b94b182bb12"
+            "url": "https://nodejs.org/dist/v9.5.0/node-v9.5.0-win-x86.7z",
+            "hash": "3e0aca4c1f03f7903975f001df4bfed9a51fa4f4fd2a195ed724b2daef51cc84",
+            "extract_dir": "node-v9.5.0-win-x86"
         }
     },
-    "env_add_path": "nodejs",
-    "post_install": "
-# Remove npmrc that makes global modules get installed in AppData\\Roaming\\npm
-rm $dir\\nodejs\\node_modules\\npm\\npmrc
-npm update -g",
-    "checkver": "<p class=\"home-version home-version-banner\">\\s*Current Version: v([0-9\\.]+)"
+    "persist": [
+        "bin",
+        "cache"
+    ],
+    "env_add_path": [
+        ".",
+        "bin"
+    ],
+    "post_install": [
+        "# Set npm prefix to install modules inside bin and npm cache so they persist",
+        "Set-Content -Value \"prefix=$persist_dir\\bin`ncache=$persist_dir\\cache\" -Path \"$dir\\node_modules\\npm\\npmrc\""
+    ],
+    "checkver": {
+        "url": "https://nodejs.org/dist/latest/",
+        "re": "node-v([\\d.]+)-x86.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://nodejs.org/dist/v$version/node-v$version-win-x64.7z",
+                "extract_dir": "node-v$version-win-x64"
+            },
+            "32bit": {
+                "url": "https://nodejs.org/dist/v$version/node-v$version-win-x86.7z",
+                "extract_dir": "node-v$version-win-x86"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHASUMS256.txt.asc"
+        }
+    }
 }

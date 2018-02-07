@@ -1,0 +1,43 @@
+{
+    "version": "6.12",
+    "homepage": "https://racket-lang.org",
+    "license": "LGPL",
+    "architecture": {
+        "64bit": {
+            "url": "https://mirror.racket-lang.org/installers/6.12/racket-6.12-x86_64-win32.exe#/dl.7z",
+            "hash": "5011e4a39a6a4c04117bf3da9cddf97a47048a80423700ee259d099573b68f06"
+        },
+        "32bit": {
+            "url": "https://mirror.racket-lang.org/installers/6.12/racket-6.12-i386-win32.exe#/dl.7z",
+            "hash": "69fbf9f8b281e3bf1f4c76c12da5ffe00d8eb4a9f2786bc04e02e0b1307d5eec"
+        }
+    },
+    "bin": [
+        "racket.exe",
+        "raco.exe"
+    ],
+    "shortcuts": [
+        [
+            "GRacket.exe",
+            "GRacket"
+        ],
+        [
+            "DrRacket.exe",
+            "DrRacket"
+        ]
+    ],
+    "checkver": {
+        "url": "https://download.racket-lang.org/",
+        "re": "Version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://mirror.racket-lang.org/installers/$version/racket-$version-x86_64-win32.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://mirror.racket-lang.org/installers/$version/racket-$version-i386-win32.exe#/dl.7z"
+            }
+        }
+    }
+}

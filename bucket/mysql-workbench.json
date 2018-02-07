@@ -1,0 +1,35 @@
+{
+    "version": "6.3.10",
+    "license": "GPL",
+    "homepage": "https://dev.mysql.com/downloads/workbench/",
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.mysql.com/Downloads/MySQLGUITools/mysql-workbench-community-6.3.10-winx64.msi",
+            "extract_dir": "MySQL\\MySQL Workbench 6.3 CE",
+            "hash": "md5:a445c5f1a362f360da1ad25ab4d2de0f"
+        }
+    },
+    "checkver": "MySQL Workbench (?<version>(?<short>[\\d]+.[\\d]+).[\\d]+)",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.mysql.com/Downloads/MySQLGUITools/mysql-workbench-community-$version-winx64.msi",
+                "extract_dir": "MySQL\\MySQL Workbench $matchShort CE"
+            }
+        },
+        "hash": {
+            "url": "$url.md5"
+        }
+    },
+    "bin": [
+        "MySQLWorkbench.exe",
+        "mysql.exe",
+        "mysqldump.exe"
+    ],
+    "shortcuts": [
+        [
+            "MySQLWorkbench.exe",
+            "MySQLWorkbench"
+        ]
+    ]
+}

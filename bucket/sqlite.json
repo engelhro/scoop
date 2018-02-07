@@ -1,14 +1,21 @@
 {
-    "homepage": "http://www.sqlite.org/",
-    "version": "3.10.2",
+    "homepage": "https://www.sqlite.org/",
+    "version": "3.22.0",
     "license": "Public Domain",
-    "url": "https://sqlite.org/2016/sqlite-tools-win32-x86-3100200.zip",
-    "hash": "b1ebfcbb0a6453022f90ee7ac37f05dfcd337e574c053b5a543963526424fae8",
-    "extract_dir": "sqlite-tools-win32-x86-3100200",
+    "url": "https://www.sqlite.org/2018/sqlite-tools-win32-x86-3220000.zip",
+    "hash": "e318d482423913fc8439bc551362372b10234594cf6928bd927fed4c7e79dcbe",
+    "extract_dir": "sqlite-tools-win32-x86-3220000",
     "bin": [
         "sqlite3.exe",
         "sqldiff.exe",
         "sqlite3_analyzer.exe"
     ],
-    "checkver": "<h3>Current Status</h3>\\s*<p><ul>\\s*<li><a.*>Version ([0-9\\.]+)</a>"
+    "checkver": {
+        "url": "https://www.sqlite.org/download.html",
+        "re": "sqlite-tools-win32-x86-(?<number>[\\d]+).zip[\\s\\S]+for SQLite version (?<version>[\\d.]+)\\."
+    },
+    "autoupdate": {
+        "url": "https://www.sqlite.org/2018/sqlite-tools-win32-x86-$matchNumber.zip",
+        "extract_dir": "sqlite-tools-win32-x86-$matchNumber"
+    }
 }

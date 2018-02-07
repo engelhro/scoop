@@ -1,8 +1,13 @@
 {
-    "version": "0.2015.11.13",
-    "url": "https://github.com/lukesampson/pshazz/archive/dac26379c038b617b09082993d17a28333d26cc0.zip",
-    "extract_dir": "pshazz-dac26379c038b617b09082993d17a28333d26cc0",
-    "hash": "70684d10f5b162d1cdc873232a4c7fa84d767f8e026c5ed61687a6eca254e4d6",
-    "bin": [ "bin\\pshazz.ps1", "libexec\\askpass.exe" ],
-    "installer": { "file": "bin\\install.ps1" }
+    "version": "0.2017.03.22",
+    "url": "https://github.com/lukesampson/pshazz/archive/fe10c46c35c0b50db962ea7a454dc646964200bb.zip",
+    "extract_dir": "pshazz-fe10c46c35c0b50db962ea7a454dc646964200bb",
+    "hash": "FB8BA76AACA276B507AF4524F59B2A30457283BE6541E7C87FEF3E8978AD0C8C",
+    "bin": [
+        "bin\\pshazz.ps1",
+        "libexec\\askpass.exe"
+    ],
+    "installer": {
+        "file": "bin\\install.ps1"
+    }
 }

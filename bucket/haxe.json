@@ -1,10 +1,9 @@
 {
-    "homepage": "http://haxe.org/",
-    "version": "3.2.1",
-    "license": "http://haxe.org/foundation/open-source.html",
-    "url": "http://haxe.org/website-content/downloads/3.2.1/downloads/haxe-3.2.1-win.zip",
-    "hash": "af57d42ca474bba826426e9403b2cb21c210d56addc8bbc0e8fafa88b3660db3",
-    "extract_dir": "haxe-3.2.1",
+    "homepage": "https://haxe.org/",
+    "version": "3.4.5",
+    "license": "https://haxe.org/foundation/open-source.html",
+    "url": "https://github.com/HaxeFoundation/haxe/releases/download/3.4.5/haxe-3.4.5-win.zip",
+    "hash": "de0c7b668dfc11cc293f055bcb5bd949158276df51f43d05dad311b6568684ae",
     "bin": [
         "haxe.exe",
         "haxelib.exe"
@@ -12,5 +11,16 @@
     "env_set": {
         "HAXEPATH": "$dir"
     },
-    "depends": "neko"
+    "depends": "neko",
+    "pre_install": "
+        if(Test-Path \"$dir\\haxe_*\") {
+            Move-Item -Force \"$dir\\haxe_*\\*\" \"$dir\"
+        }
+    ",
+    "checkver": {
+        "github": "https://github.com/HaxeFoundation/haxe"
+    },
+    "autoupdate": {
+        "url": "https://github.com/HaxeFoundation/haxe/releases/download/$version/haxe-$version-win.zip"
+    }
 }

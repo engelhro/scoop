@@ -1,11 +1,20 @@
 {
     "homepage": "https://www.r-project.org",
-    "version": "3.2.3",
+    "version": "3.4.3",
     "license": "GPL2",
-    "url": "https://cran.rstudio.com/bin/windows/base/R-3.2.3-win.exe",
-    "hash": "b88083895164a483c7583a69f16921cc93e07c327b016740a167607f335c0b3d",
+    "architecture": {
+        "64bit": {
+            "url": "https://cran.rstudio.com/bin/windows/base/R-3.4.3-win.exe",
+            "hash": "7d46cd1de979cd0ef1a6e8de0e1a35223d1304d8953e4cd0d414153852ce684b",
+            "pre_install": "copy-item -recurse \"$dir\\bin\\x64\" \"$dir\\bin\\curr_arch\""
+        },
+        "32bit": {
+            "url": "https://cran.rstudio.com/bin/windows/base/R-3.4.3-win.exe",
+            "hash": "7d46cd1de979cd0ef1a6e8de0e1a35223d1304d8953e4cd0d414153852ce684b",
+            "pre_install": "copy-item -recurse \"$dir\\bin\\i386\" \"$dir\\bin\\curr_arch\""
+        }
+    },
     "innosetup": true,
-    "pre_install": "if ([intptr]::size -eq 8) { $r_arch = \"x64\" } else { $r_arch = \"i386\" }; copy-item -recurse $dir\\bin\\$r_arch $dir\\bin\\curr_arch;",
     "bin": [
         "bin\\curr_arch\\r.exe",
         "bin\\curr_arch\\rterm.exe",
@@ -19,11 +28,19 @@ You can remove Powershell's 'r' command with:
 ... but this only affects your current session: if you'd like to remove it for all future sessions you need to add the command above to your Powershell profile.
 
 Annoying, right?! You might want to check out Pshazz (scoop install pshazz)--this has a plugin to remove some crazy aliases from Powershell, as well as many other improvements.
-
-If you are on a 64-bit machine then R comes in a 32-bit and a 64-bit version. Currently scoop sets the shims depending on your machine's architecture.
 ",
     "checkver": {
         "url": "https://cran.rstudio.com/bin/windows/base/",
-        "re": "<h1>R-([0-9\\.]+)"
+        "re": "<h1>R-([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cran.rstudio.com/bin/windows/base/R-$version-win.exe"
+            },
+            "32bit": {
+                "url": "https://cran.rstudio.com/bin/windows/base/R-$version-win.exe"
+            }
+        }
     }
 }

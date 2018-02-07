@@ -7,6 +7,7 @@
 . "$psscriptroot\..\lib\versions.ps1"
 . "$psscriptroot\..\lib\depends.ps1"
 . "$psscriptroot\..\lib\config.ps1"
+. "$psscriptroot\..\lib\git.ps1"
 
 reset_aliases
 
@@ -16,7 +17,7 @@ $needs_update = $false
 
 if(test-path "$currentdir\.git") {
     pushd $currentdir
-    git fetch -q origin
+    git_fetch -q origin
     $commits = $(git log "HEAD..origin/$(scoop config SCOOP_BRANCH)" --oneline)
     if($commits) { $needs_update = $true }
     popd
@@ -26,12 +27,12 @@ else {
 }
 
 if($needs_update) {
-    "scoop is out of date. run scoop update to get the latest changes."
+    warn "Scoop is out of date. Run 'scoop update' to get the latest changes."
 }
-else { "scoop is up-to-date."}
+else { success "Scoop is up to date."}
 
 $failed = @()
-$old = @()
+$outdated = @()
 $removed = @()
 $missing_deps = @()
 
@@ -42,63 +43,54 @@ $true, $false | % { # local and global apps
 
     gci $dir | ? name -ne 'scoop' | % {
         $app = $_.name
-        $version = current_version $app $global
-        if($version) {
-            $install_info = install_info $app $version $global
+        $status = app_status $app $global
+        if($status.failed) {
+            $failed += @{ $app = $status.version }
         }
-
-        if(!$install_info) {
-            $failed += @{ $app = $version }; return
+        if($status.removed) {
+            $removed += @{ $app = $status.version }
         }
-
-        $manifest = manifest $app $install_info.bucket $install_info.url
-        if(!$manifest) { $removed += @{ $app = $version }; return }
-
-        if((compare_versions $manifest.version $version) -gt 0) {
-            $old += @{ $app = @($version, $manifest.version) }
+        if($status.outdated) {
+            $outdated += @{ $app = @($status.version, $status.latest_version) }
         }
-
-        $deps = @(runtime_deps $manifest) | ? { !(installed $_) }
-        if($deps) {
-            $missing_deps += ,(@($app) + @($deps))
+        if($status.missing_deps) {
+            $missing_deps += ,(@($app) + @($status.missing_deps))
         }
     }
 }
 
-
-
-if($old) {
-    "updates are available for:"
-    $old.keys | % {
-        $versions = $old.$_
+if($outdated) {
+    write-host -f DarkCyan 'Updates are available for:'
+    $outdated.keys | % {
+        $versions = $outdated.$_
         "    $_`: $($versions[0]) -> $($versions[1])"
     }
 }
 
 if($removed) {
-    "these app manifests have been removed:"
+    write-host -f DarkCyan 'These app manifests have been removed:'
     $removed.keys | % {
         "    $_"
     }
 }
 
 if($failed) {
-    "these apps failed to install:"
+    write-host -f DarkCyan 'These apps failed to install:'
     $failed.keys | % {
         "    $_"
     }
 }
 
 if($missing_deps) {
-    "missing runtime dependencies:"
+    write-host -f DarkCyan 'Missing runtime dependencies:'
     $missing_deps | % {
         $app, $deps = $_
-        "    $app requires $([string]::join(',', $deps))"
+        "    '$app' requires '$([string]::join("', '", $deps))'"
     }
 }
 
-if(!$old -and !$removed -and !$failed -and !$missing_deps) {
-    success "everything is ok!"
+if(!$old -and !$removed -and !$failed -and !$missing_deps -and !$needs_update) {
+    success "Everything is ok!"
 }
 
 exit 0

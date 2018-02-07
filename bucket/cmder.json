@@ -1,0 +1,27 @@
+{
+    "homepage": "http://cmder.net",
+    "version": "1.3.4",
+    "license": "MIT",
+    "persist": [
+        "config"
+    ],
+    "url": "https://github.com/cmderdev/cmder/releases/download/v1.3.4/cmder_mini.zip",
+    "hash": "6a80ea6f6e90251fcc17756c50bf2277ccbc4eac662295161cd59b39c530b50f",
+    "bin": "Cmder.exe",
+    "shortcuts": [
+        [
+            "Cmder.exe",
+            "Cmder"
+        ]
+    ],
+    "env_set": {
+        "CMDER_ROOT": "$dir",
+        "ConEmuDir": "$dir\\vendor\\conemu-maximus5"
+    },
+    "checkver": {
+        "github": "https://github.com/cmderdev/cmder"
+    },
+    "autoupdate": {
+        "url": "https://github.com/cmderdev/cmder/releases/download/v$version/cmder_mini.zip"
+    }
+}
